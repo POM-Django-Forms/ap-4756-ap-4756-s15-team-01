@@ -24,11 +24,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 
 try:
-    environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+    environ.Env.read_env(os.path.join(BASE_DIR, '.env.example'))
 except FileNotFoundError:
-    print("File .env not found.")
+    print("File .env.example not found.")
 except environ.EnvError as e:
-    print(f"An error while reading .env file: {e}")
+    print(f"An error while reading .env.example file: {e}")
 
 SECRET_KEY = env("SECRET_KEY")
 

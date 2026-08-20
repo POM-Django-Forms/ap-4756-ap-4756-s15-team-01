@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
+from .forms import RegisterForm
 
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, permission_required
@@ -11,46 +12,31 @@ def index_view(request):
 
 
 def register_view(request):
-
     if request.user.is_authenticated:
-        messages.info(request, "You are already logged")
+        messages.info(request, "You are already logged in.")
         return redirect('authentication:profile')
 
     if request.method == 'POST':
-        email = request.POST.get('email', '').strip()
-        password = request.POST.get('password', '')
-        confirm_password = request.POST.get('confirm_password', '')
-        first_name = request.POST.get('first_name', '').strip()
-        last_name = request.POST.get('last_name', '').strip()
-        middle_name = request.POST.get('middle_name', '').strip()
-        role = int(request.POST.get('role', 0))
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            new_user = CustomUser.objects.create_user(
+                email=data['email'],
+                password=data['password'],
+                first_name=data['first_name'],
+                last_name=data['last_name'],
+                middle_name=data.get('middle_name', ''),
+                role=data['role'],
+                is_active=True
+            )
 
+            login(request, new_user)
+            messages.success(request, 'Registration has been successful!')
+            return redirect('authentication:index_auth')
+    else:
+        form = RegisterForm()
 
-
-        if password != confirm_password:
-            messages.error(request, 'Passwords do not match.')
-            return render(request, 'authentication/register.html')
-
-        if CustomUser.objects.filter(email=email).exists():
-            messages.error(request, 'The user with this email already exist.')
-            return render(request, 'authentication/register.html')
-
-        new_user = CustomUser.objects.create_user(
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-            middle_name=middle_name,
-            role=role,
-            is_active=True
-        )
-
-        login(request, new_user)
-
-        messages.success(request, 'Registration has been successful!')
-        return redirect('authentication:index_auth')
-
-    return render(request, 'authentication/register.html')
+    return render(request, 'authentication/register.html', {'form': form})
 
 
 def login_view(request):
