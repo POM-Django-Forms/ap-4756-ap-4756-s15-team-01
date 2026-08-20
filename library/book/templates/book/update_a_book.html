@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Edit book{% endblock %}
+{% block content %}
+<div class="my-4">
+    <h1>Edit Book</h1>
+
+    <form method="post" action="{% url 'update_a_book' book.id %}" class="col-md-6">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="mb-3 d-flex flex-column">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="text-danger">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'book_detail' book.id %}" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

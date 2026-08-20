@@ -30,6 +30,23 @@ def create_a_book(request):
     return render(request, 'book/create_a_book.html', {'form': form})
 
 @login_required
+@permission_required('is_staff', raise_exception=True)
+def update_a_book(request, book_id):
+    book = Book.object.get(pk=book_id)
+
+    if request.method == 'POST':
+        form = BookForm(request.POST, instance=book)
+        if form.is_valid():
+            book = form.save()
+            authors = form.cleaned_data.get('authors')
+            book.authors.set(authors)
+            return redirect('book_detail', book_id=book.id)
+    else:
+        form = BookForm(instance=book, initial={'authors': book.authors.all()})
+
+    return render(request, 'book/update_a_book.html', {'form': form, 'book': book})
+
+@login_required
 def list_of_books(request):
     books = Book.objects.all()
     name = request.GET.get('name')
