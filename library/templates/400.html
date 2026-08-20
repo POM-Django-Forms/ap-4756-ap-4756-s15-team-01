@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}400 - Bad Request{% endblock %}
+{% block content %}
+<div class="my-5 text-center">
+    <h1 class="display-4">400</h1>
+    <p class="lead">Bad request</p>
+    <a href="{% url 'authentication:index_auth' %}" class="btn btn-primary">Go to homepage</a>
+</div>
+{% endblock %}

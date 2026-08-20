@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}All Orders{% endblock %}
+{% block content %}
+<div class="my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>All Orders</h1>
+        <a href="{% url 'create_an_order' %}" class="btn btn-primary">+ New order</a>
+    </div>
+
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Book</th>
+                <th>User</th>
+                <th>Borrowed</th>
+                <th>Planned return</th>
+                <th>Returned</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td><a href="{% url 'book_detail' order.book.id %}">{{ order.book.name }}</a></td>
+                <td>{{ order.user.email }}</td>
+                <td>{{ order.created_at|date:"Y-m-d" }}</td>
+                <td>{{ order.plated_end_at|date:"Y-m-d" }}</td>
+                <td>{{ order.end_at|date:"Y-m-d"|default:"-" }}</td>
+                <td>
+                    {% if order.end_at %}
+                        <span class="badge bg-secondary">Returned</span>
+                    {% else %}
+                        <span class="badge bg-success">Borrowed</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not order.end_at %}
+                        <a href="{% url 'close_an_order' order.id %}" class="btn btn-sm btn-outline-danger">Close</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" class="text-center text-muted">No orders yet</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

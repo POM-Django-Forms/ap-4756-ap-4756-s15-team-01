@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Close Order{% endblock %}
+{% block content %}
+<div class="my-4">
+    <h1>Close Order #{{ order.id }}</h1>
+
+    <ul class="list-group mb-4" style="max-width: 500px;">
+        <li class="list-group-item d-flex justify-content-between">
+            <span>Book</span>
+            <strong>{{ order.book.name }}</strong>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+            <span>User</span>
+            <strong>{{ order.user.email }}</strong>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+            <span>Borrowed</span>
+            <strong>{{ order.created_at|date:"Y-m-d" }}</strong>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+            <span>Planned return</span>
+            <strong>{{ order.plated_end_at|date:"Y-m-d" }}</strong>
+        </li>
+    </ul>
+
+    {% if order.end_at %}
+        <div class="alert alert-secondary">This order is already closed.</div>
+        <a href="{% url 'list_of_orders' %}" class="btn btn-outline-secondary">← Back to all orders</a>
+    {% else %}
+        <form method="post" action="{% url 'close_an_order' order.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Confirm</button>
+            <a href="{% url 'list_of_orders' %}" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}

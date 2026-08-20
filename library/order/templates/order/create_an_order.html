@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}New Order{% endblock %}
+{% block content %}
+<div class="my-4">
+    <h1>Create an Order</h1>
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="{% url 'create_an_order' %}" class="col-md-6">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Book</label>
+            <select name="book" class="form-select" required>
+                {% for b in books %}
+                    <option value="{{ b.id }}" {% if request.GET.book == b.id|stringformat:"s" %}selected{% endif %}>
+                        {{ b.name }} ({{ b.count }} available)
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Create Order</button>
+        <a href="{% url 'list_of_orders' %}" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

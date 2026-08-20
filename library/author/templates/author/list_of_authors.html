@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Authors{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center my-4">
+    <h1>Authors</h1>
+    {% if request.user.is_staff %}
+    <a href="{% url 'author:create_an_author' %}" class="btn btn-primary">+ Add author</a>
+    {% endif %}
+</div>
+
+<form method="get" class="row g-2 mb-4">
+    <div class="col-auto">
+        <input type="text" name="name" class="form-control" placeholder="Search by name" value="{{ request.GET.name }}">
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-primary">Filter</button>
+    </div>
+</form>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr><th>Name</th><th>Surname</th><th>Patronymic</th><th>Books count</th>
+            {% if request.user.is_staff %}
+            <th scope="col" id="edit"></th>
+            <th scope="col"></th></tr>
+            {% endif %}
+    </thead>
+    <tbody>
+        {% for author in authors %}
+        <tr>
+            <td><a href="{% url 'author:author_detail' author.id %}">{{ author.name }}</a></td>
+            <td>{{ author.surname }}</td>
+            <td>{{ author.patronymic }}</td>
+            <td>{{ author.books.count }}</td>
+            {% if request.user.is_staff %}
+            <td><a role="button" class="btn btn-block btn-dark" href="{% url 'author:update_an_author' author.id %}">update</a></td>
+            <td><a role="button" class="btn btn-block btn-danger" href="{% url 'author:delete_an_author' author.id %}"
+                onclick="return authorDelete('{{ author.name}}')"> Delete
+            {% endif %}
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="text-center text-muted">No authors yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

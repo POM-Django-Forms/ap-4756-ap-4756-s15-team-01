@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Update an Author{% endblock %}
+{% block content %}
+
+<div class="my-4">
+    <h1>Update an Author</h1>
+    <form method="POST" action="{% url 'author:update_an_author' author.id %}" class="col-md-6">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" name="name" class="form-control" maxlength="20" value="{{ author.name }}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Surname</label>
+            <input type="text" name="surname" class="form-control" maxlength="20" value="{{ author.surname }}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Patronymic</label>
+            <input type="text" name="patronymic" class="form-control" maxlength="20" value="{{ author.patronymic }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{% url 'author:list_of_authors' %}" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

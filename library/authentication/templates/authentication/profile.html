@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="my-4">
+    <h1>My Profile</h1>
+    <ul class="list-group mb-3" style="max-width: 500px;">
+        <li class="list-group-item d-flex justify-content-between"><span>Name</span><strong>{{ user_obj.first_name }} {{ user_obj.last_name }}</strong></li>
+        <li class="list-group-item d-flex justify-content-between"><span>Email</span><strong>{{ user_obj.email }}</strong></li>
+        <li class="list-group-item d-flex justify-content-between"><span>Role</span><strong>{{ user_obj.get_role_name }}</strong></li>
+    </ul>
+    <a role="button" class="btn btn-block btn-dark" href="{% url 'authentication:update_profile' user.id %}">update</a>
+    <a href="{% url 'user_orders' user_obj.pk %}" class="btn btn-outline-primary">View borrowed books</a>
+</div>
+{% endblock %}

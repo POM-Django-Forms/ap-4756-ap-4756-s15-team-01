@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Update Profile{% endblock %}
+{% block content %}
+
+<div class="my-4">
+    <h1>Update Profile</h1>
+    <form method="POST" action="{% url 'authentication:update_profile' user.id %}" class="col-md-6">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">First Name</label>
+            <input type="text" name="first_name" class="form-control" maxlength="20" value="{{ user.first_name }}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Middle Name</label>
+            <input type="text" name="middle_name" class="form-control" maxlength="20" value="{{ user.middle_name }}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Last Name</label>
+            <input type="text" name="last_name" class="form-control" maxlength="20" value="{{ user.last_name }}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">New password</label>
+            <input type="text" name="password" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{% url 'authentication:profile' %}" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
