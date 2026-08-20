@@ -13,9 +13,12 @@ class BookForm(forms.ModelForm):
     authors = forms.ModelMultipleChoiceField(
         queryset=Author.objects.all(),
         required=False,
-        widget=forms.SelectMultiple
+        widget=forms.CheckboxSelectMultiple
     )
-    count = forms.IntegerField(validators=[validate_non_negative])
+    count = forms.IntegerField(
+        validators=[validate_non_negative],
+        label='Available Copies',
+    )
 
     class Meta:
         model = Book
@@ -23,7 +26,6 @@ class BookForm(forms.ModelForm):
         labels = {
             'name': 'Name',
             'description': 'Description',
-            'count': 'Available Copies',
         }
 
     def __init__(self, *args, **kwargs):

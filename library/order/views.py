@@ -2,11 +2,10 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from datetime import timedelta
 from order.models import Order
-from book.models import Book
-from authentication.models import CustomUser
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import Http404
 from django.contrib import messages
+from .forms import OrderForm
 
 LOAN_PERIOD = timedelta(weeks=2)
 
@@ -15,28 +14,24 @@ def create_an_order(request):
     if request.user.is_staff:
         messages.error(request, "Librarians cannot create orders")
         return render(request, '403.html', status=403)
-    
+
     if request.method == 'POST':
-        book_id = request.POST.get('book')
-        book = Book.get_by_id(book_id)
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            book = form.cleaned_data['book']
+            plated_end_at = timezone.now() + LOAN_PERIOD
+            order = Order.create(user=request.user, book=book, plated_end_at=plated_end_at)
 
-        if book is None:
-            raise Http404("Book not found")
+            if order is not None:
+                book.count -= 1
+                book.save()
+                return redirect('user_orders', user_id=request.user.id)
 
-        plated_end_at = timezone.now() + LOAN_PERIOD
-        order = Order.create(user=request.user, book=book, plated_end_at=plated_end_at)
+            form.add_error('book', 'No copies available.')
+    else:
+        form = OrderForm()
 
-        if order is None:
-            books = Book.objects.all()
-            return render(request, 'order/create_an_order.html', {'error': 'No copies available.', 'books': books})
-
-        book.count -= 1
-        book.save()
-
-        return redirect('user_orders', user_id=request.user.id)
-
-    books = Book.objects.all()
-    return render(request, 'order/create_an_order.html', {'books': books})
+    return render(request, 'order/create_an_order.html', {'form': form})
 
 @login_required
 @permission_required('is_staff', raise_exception=True)

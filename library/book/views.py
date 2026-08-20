@@ -1,4 +1,3 @@
-# Create your views here.
 from django.shortcuts import render, redirect
 from book.models import Book
 from author.models import Author
@@ -32,7 +31,9 @@ def create_a_book(request):
 @login_required
 @permission_required('is_staff', raise_exception=True)
 def update_a_book(request, book_id):
-    book = Book.object.get(pk=book_id)
+    book = Book.get_by_id(book_id)
+    if book is None:
+        raise Http404("Not found")
 
     if request.method == 'POST':
         form = BookForm(request.POST, instance=book)
