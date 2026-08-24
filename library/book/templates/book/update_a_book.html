@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
-{% block title %}Add book{% endblock %}
+{% block title %}Edit book{% endblock %}
 {% block content %}
 <div class="my-4">
-    <h1>Add a New Book</h1>
+    <h1>Edit Book</h1>
 
-    <form method="post" action="{% url 'create_a_book' %}" class="col-md-6">
+    <form method="post" action="{% url 'update_a_book' book.id %}" class="col-md-6">
         {% csrf_token %}
         {% for field in form %}
             <div class="mb-3 d-flex flex-column">
@@ -15,8 +15,8 @@
                 {% endif %}
             </div>
         {% endfor %}
-        <button type="submit" class="btn btn-primary">Create</button>
-        <a href="{% url 'list_of_books' %}" class="btn btn-outline-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'book_detail' book.id %}" class="btn btn-outline-secondary">Cancel</a>
     </form>
 </div>
 {% endblock %}

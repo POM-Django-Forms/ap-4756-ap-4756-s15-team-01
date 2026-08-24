@@ -29,6 +29,10 @@
         {% endif %}
     {% endif %}
 
+    {% if request.user.is_staff %}
+        <a href="{% url 'update_a_book' book.id %}" class="btn btn-warning">Edit</a>
+    {% endif %}
+
     <a href="{% url 'list_of_books' %}" class="btn btn-outline-secondary">← Back</a>
 </div>
 {% endblock %}
