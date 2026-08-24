@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Authors{% endblock %}
+
 {% block content %}
 <div class="d-flex justify-content-between align-items-center my-4">
     <h1>Authors</h1>
@@ -10,20 +11,30 @@
 
 <form method="get" class="row g-2 mb-4">
     <div class="col-auto">
-        <input type="text" name="name" class="form-control" placeholder="Search by name" value="{{ request.GET.name }}">
+        {{ form.name }}
     </div>
     <div class="col-auto">
         <button type="submit" class="btn btn-outline-primary">Filter</button>
     </div>
+    {% if request.GET.name %}
+        <div class="col-auto">
+            <a href="{% url 'author:list_of_authors' %}" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    {% endif %}
 </form>
 
 <table class="table table-striped align-middle">
     <thead>
-        <tr><th>Name</th><th>Surname</th><th>Patronymic</th><th>Books count</th>
+        <tr>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Patronymic</th>
+            <th>Books count</th>
             {% if request.user.is_staff %}
             <th scope="col" id="edit"></th>
-            <th scope="col"></th></tr>
+            <th scope="col"></th>
             {% endif %}
+        </tr>
     </thead>
     <tbody>
         {% for author in authors %}
@@ -34,12 +45,16 @@
             <td>{{ author.books.count }}</td>
             {% if request.user.is_staff %}
             <td><a role="button" class="btn btn-block btn-dark" href="{% url 'author:update_an_author' author.id %}">update</a></td>
-            <td><a role="button" class="btn btn-block btn-danger" href="{% url 'author:delete_an_author' author.id %}"
-                onclick="return authorDelete('{{ author.name}}')"> Delete
+            <td>
+                <a role="button" class="btn btn-block btn-danger" href="{% url 'author:delete_an_author' author.id %}"
+                   onclick="return authorDelete('{{ author.name }}')">Delete</a>
+            </td>
             {% endif %}
         </tr>
         {% empty %}
-        <tr><td colspan="4" class="text-center text-muted">No authors yet.</td></tr>
+        <tr>
+            <td colspan="{% if request.user.is_staff %}6{% else %}4{% endif %}" class="text-center text-muted">No authors yet.</td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>
